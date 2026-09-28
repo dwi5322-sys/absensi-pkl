@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Aplikasi Absensi Siswa PKL TKJ - SMK Miftahul Islam Kunir</title>
+    <style>
+        :root {
+            --blue-primary: #3b82f6;
+            --blue-hover: #2563eb;
+            --pink-accent: #ec4899;
+            --pink-hover: #db2777;
+            --yellow-accent: #facc15;
+            --yellow-dark: #eab308;
+            --bg-gradient: linear-gradient(135deg, #eff6ff 0%, #fbcfe8 50%, #fef9c3 100%);
+            --text-dark: #1e293b;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --border-radius-card: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            padding: 16px 10px;
+            color: var(--text-dark);
+            position: relative;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        /* Watermark Background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vh;
+            max-width: 480px;
+            max-height: 480px;
+            background-image: url('logo.jpg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.12;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 960px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 24px 18px;
+            border-radius: var(--border-radius-card);
+            box-shadow: var(--card-shadow);
+            border: 2px solid #ffffff;
+        }
+
+        @media (min-width: 768px) {
+            body { padding: 35px 20px; }
+            .container { padding: 35px; }
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header-title h1 {
+            font-size: clamp(1.2rem, 3.5vw, 1.85rem);
+            line-height: 1.25;
+            margin-bottom: 4px;
+            background: linear-gradient(45deg, var(--blue-primary), var(--pink-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .header-title .subtitle {
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 22px;
+            background: #f1f5f9;
+            padding: 5px;
+            border-radius: 14px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 10px;
+            min-height: 46px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            color: #64748b;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            background: var(--blue-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        h2 {
+            color: #1e293b;
+            font-size: clamp(1.15rem, 3vw, 1.45rem);
+            font-weight: 700;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .form-grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 16px;
+        }
+
+        label {
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 13.5px;
+            color: #475569;
+        }
+
+        select, input[type="text"], input[type="password"], input[type="file"] {
+            width: 100%;
+            min-height: 46px;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14.5px;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            background: white;
+            color: var(--text-dark);
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 36px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--pink-accent);
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
+        }
+
+        input[type="file"] {
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="file"]::file-selector-button {
+            padding: 6px 12px;
+            margin-right: 12px;
+            background: #eff6ff;
+            color: var(--blue-primary);
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        button.btn-submit {
+            width: 100%;
+            min-height: 48px;
+            background: linear-gradient(45deg, var(--pink-accent), var(--pink-hover));
+            color: white;
+            border: none;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 8px;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        button.btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(236, 72, 153, 0.45);
+        }
+
+        button.btn-submit:active {
+            transform: translateY(1px);
+        }
+
+        .filter-toolbar {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        @media (min-width: 640px) {
+            .filter-toolbar {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .filter-box {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .filter-box {
+                flex-direction: row;
+                align-items: center;
+                width: auto;
+            }
+            .filter-box label {
+                margin-bottom: 0;
+                white-space: nowrap;
+            }
+            .filter-box select {
+                width: 200px;
+            }
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .action-btns {
+                width: auto;
+            }
+        }
+
+        .btn-action {
+            flex: 1;
+            min-height: 42px;
+            padding: 9px 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        button.btn-export {
+            background: var(--yellow-accent);
+            color: #713f12;
+            box-shadow: 0 2px 8px rgba(250, 204, 21, 0.35);
+        }
+        button.btn-export:hover { background: var(--yellow-dark); }
+
+        button.btn-reset {
+            background: #ef4444;
+            color: white;
+        }
+        button.btn-reset:hover { background: #dc2626; }
+
+        button.btn-logout {
+            background: #64748b;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        button.btn-logout:hover { background: #475569; }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            min-width: 680px; /* Menjamin tabel tidak terhimpit di HP */
+        }
+
+        th, td {
+            padding: 12px 14px;
+            text-align: left;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+
+        tr:hover td {
+            background-color: #fdf2f8;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 700;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .badge-kelas {
+            background: #ede9fe;
+            color: #6d28d9;
+            font-weight: 700;
+        }
+        .bg-hadir { background: #dcfce7; color: #15803d; }
+        .bg-izin { background: #fef9c3; color: #a16207; }
+        .bg-sakit { background: #dbeafe; color: #1d4ed8; }
+        .bg-alpa { background: #ffe4e6; color: #be123c; }
+
+        .img-preview {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--pink-accent);
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: block;
+        }
+        .img-preview:hover { transform: scale(1.08); }
+        .no-photo { font-style: italic; color: #94a3b8; font-size: 12px; }
+
+        .counter-badge {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 24px;
+            border-radius: 18px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: modalFadeIn 0.2s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 18px;
+            top: 14px;
+            font-size: 26px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #94a3b8;
+            line-height: 1;
+            padding: 4px;
+        }
+        .close-btn:hover { color: #1e293b; }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: none;
+            text-align: center;
+            background: #fee2e2;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        /* Custom Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            text-align: center;
+            max-width: 90vw;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-title">
+        <h1>Aplikasi Absensi Siswa PKL TKJ</h1>
+        <div class="subtitle">Tahun Ajaran 2026/2027 • SMK Miftahul Islam Kunir</div>
+    </div>
+    
+    <!-- Tab Navigasi -->
+    <div class="tabs">
+        <button class="tab-btn active" id="tabSiswaBtn" onclick="switchTab('siswa')">📝 Form Absensi</button>
+        <button class="tab-btn" id="tabGuruBtn" onclick="bukaTabGuru()">📊 Rekap Absensi</button>
+    </div>
+
+    <div id="section-siswa">
+        <div class="section-header">
+            <h2>Isi Presensi Siswa</h2>
+        </div>
+        
+        <form id="absensiForm">
+            <div class="form-grid form-grid-2">
+                <!-- Dropdown Pilihan Kelas -->
+                <div class="form-group">
+                    <label for="kelas">Kelas / Rombel:</label>
+                    <select id="kelas" required>
+                        <option value="">-- Pilih Kelas --</option>
+                        <option value="XII TKJ A">XII TKJ A</option>
+                        <option value="XII TKJ B">XII TKJ B</option>
+                    </select>
+                </div>
+
+                <!-- Dropdown Pilihan Nama Siswa -->
+                <div class="form-group">
+                    <label for="nama">Nama Siswa:</label>
+                    <select id="nama" required>
+                        <option value="">-- Pilih Nama --</option>
+                        <option value="Achmad Wildani Rahmatullah">Achmad Wildani Rahmatullah</option>
+                        <option value="Mukhammad Nur Ferdiyan">Mukhammad Nur Ferdiyan</option>
+                        <option value="Muhammad Seger">Muhammad Seger</option>
+                        <option value="Jaenal Sabidin">Jaenal Sabidin</option>
+                        <option value="Putra Yuana Abu Ura Ira">Putra Yuana Abu Ura Ira</option>
+                        <option value="Ahmad">Ahmad</option> 
+                        <option value="Femas Hadi Pratama">Femas Hadi Pratama</option>
+                        <option value="Muhammad Zainuri Maulana">Muhammad Zainuri Maulana</option>
+                        <option value="Anisatul Azizah">Anisatul Azizah</option>
+                        <option value="Novi Dwi Rohmania">Novi Dwi Rohmania</option>
+                        <option value="Alziah Vera Giantary">Alziah Vera Giantary</option>
+                        <option value="Esti Sya'bania Rifa'i">Esti Sya'bania Rifa'i</option>
+                        <option value="Alin Aprilia Ardiani">Alin Aprilia Ardiani</option>
+                        <option value="Yenita Lusianti">Yenita Lusianti</option>
+                        <option value="Indriani">Indriani</option>
+                        <option value="Lailatul Badria">Lailatul Badria</option>
+                        <option value="Silfiatul Hafizah">Silfiatul Hafizah</option> 
+                        <option value="Abdul Hanif Taufik">Abdul Hanif Taufik</option>
+                        <option value="Fadilul Aziz">Fadilul Aziz</option>
+                        <option value="M. Riswan Mhufli Hudin">M. Riswan Mhufli Hudin</option>
+                        <option value="Ana Maria Ningsih">Ana Maria Ningsih</option>
+                        <option value="Ana Saydatus Salsabilah">Ana Saydatus Salsabilah</option>
+                        <option value="Fatimah Nurbait">Fatimah Nurbait</option>
+                        <option value="Yunita Dwi Nur Aini">Yunita Dwi Nur Aini</option>
+                        <option value="Amilia">Amilia</option>
+                        <option value="Nanda Asmara">Nanda Asmara</option>
+                        <option value="Munadifa">Munadifa</option> 
+                        <option value="Yolanda Ratu Meisya">Yolanda Ratu Meisya</option>
+                        <option value="Yulia Rahmadani">Yulia Rahmadani</option>
+                        <option value="Halimatul Fitriyah">Halimatul Fitriyah</option>
+                        <option value="Nurul Huda">Nurul Huda</option>
+                        <option value="Vay Axcel April Leo Handre">Vay Axcel April Leo Handre</option>
+                        <option value="Mohammad Hafid Hasan">Mohammad Hafid Hasan</option>
+                        <option value="Noval Agung Danuarta">Noval Agung Danuarta</option>
+                        <option value="Muhammad Febian Gofir Maulana Rizki">Muhammad Febian Gofir Maulana Rizki</option>
+                        <option value="Ana Diah Anggraini">Ana Diah Anggraini</option>
+                        <option value="Fernanda Yudhistira Armecca">Fernanda Yudhistira Armecca</option>
+                        <option value="Fifi Firdausiah">Fifi Firdausiah</option> 
+                        <option value="Salsabila Eka Maulinda">Salsabila Eka Maulinda</option>
+                        <option value="Nazwa Dwi Aureliya Anggana">Nazwa Dwi Aureliya Anggana</option>
+                        <option value="Syifa Zakaria">Syifa Zakaria</option>
+                        <option value="Eni">Eni</option>
+                        <option value="Novi Indriyani">Novi Indriyani</option>
+                        <option value="Siti Binti Ifita">Siti Binti Ifita</option>
+                        <option value="Muhammad Ilfan Hidirullah">Muhammad Ilfan Hidirullah</option>
+                        <option value="Muhammad Nurul Jadid">Muhammad Nurul Jadid</option>
+                        <option value="Frydho Erlangga">Frydho Erlangga</option>
+                        <option value="Diva Dwi Agustin">Diva Dwi Agustin</option>
+                        <option value="Umairotus Sidqia">Umairotus Sidqia</option> 
+                        <option value="Abdul Rokip">Abdul Rokip</option>
+                        <option value="Mohamad Rangga">Mohamad Rangga</option>
+                        <option value="Handika Yodi Pratama">Handika Yodi Pratama</option>
+                        <option value="Rafly Abdur Rahman Hamid">Rafly Abdur Rahman Hamid</option>
+                        <option value="Anggun Lidindah Dewi">Anggun Lidindah Dewi</option>
+                        <option value="Risky Maulida Nisa">Risky Maulida Nisa</option>
+                        <option value="Khoirotul Uyun">Khoirotul Uyun</option>
+                        <option value="Wahyu Meiysah Arthasari">Wahyu Meiysah Arthasari</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid form-grid-2">
+                <div class="form-group">
+                    <label for="status">Status Kehadiran:</label>
+                    <select id="status" required>
+                        <option value="Hadir">Hadir</option>
+                        <option value="Izin">Izin</option>
+                        <option value="Sakit">Sakit</option>
+                        <option value="Alpa">Alpa</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="foto">Foto Bukti (Selfie / Surat Izin):</label>
+                    <input type="file" id="foto" accept="image/*" capture="environment">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="keterangan">Keterangan / Lokasi PKL (Opsional):</label>
+                <input type="text" id="keterangan" placeholder="Contoh: PKL di PT Telkom / Sakit flu">
+            </div>
+
+            <button type="submit" class="btn-submit">Kirim Presensi Sekarang</button>
+        </form>
+    </div>
+
+    <div id="section-guru" class="hidden">
+        <div class="section-header">
+            <h2>Rekapitulasi Kehadiran Siswa</h2>
+            <button class="btn-logout" onclick="logoutGuru()">Keluar Guru</button>
+        </div>
+        
+        <!-- Filter Kelas & Tombol Aksi -->
+        <div class="filter-toolbar">
+            <div class="filter-box">
+                <label for="filterKelas"><strong>Filter Kelas:</strong></label>
+                <select id="filterKelas" onchange="tampilkanRekap()">
+                    <option value="SEMUA">Semua Kelas</option>
+                    <option value="XII TKJ A">XII TKJ A</option>
+                    <option value="XII TKJ B">XII TKJ B</option>
+                </select>
+            </div>
+            
+            <div class="action-btns">
+                <button class="btn-action btn-export" onclick="exportToCSV()">📥 Unduh Excel/CSV</button>
+                <button class="btn-action btn-reset" onclick="hapusSemuaData()">🗑️ Reset Data</button>
+            </div>
+        </div>
+
+        <div class="counter-badge" id="rekapCounter">Menampilkan 0 data absensi</div>
+        
+        <!-- Tabel Responsif dengan Scroll Horisontal -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Waktu</th>
+                        <th style="width: 100px;">Kelas</th>
+                        <th>Nama Siswa</th>
+                        <th style="width: 90px;">Status</th>
+                        <th style="width: 70px;">Bukti</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelRekap">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="tutupModalLogin()">&times;</span>
+        <h3 style="text-align: center; margin-bottom: 16px; font-size: 1.25rem;">Autentikasi Guru</h3>
+        <p id="errorMessage" class="error-message">Username atau password salah!</p>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" required placeholder="Masukkan username guru" autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" required placeholder="Masukkan password" autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-submit" style="margin-top: 6px; background: var(--blue-primary);">Masuk ke Rekap</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Foto Preview Besar -->
+<div id="fotoModal" class="modal">
+    <div class="modal-content" style="max-width: 480px; text-align: center;">
+        <span class="close-btn" onclick="tutupModalFoto()">&times;</span>
+        <h3 style="margin-bottom: 8px; font-size: 1.15rem;">Bukti Foto Absensi</h3>
+        <p id="fotoModalCaption" style="font-size: 13px; color: #64748b; margin-bottom: 12px;"></p>
+        <img id="imgModalFull" src="" alt="Pratinjau Foto" style="width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; border: 2px solid var(--pink-accent);">
+    </div>
+</div>
+
+<!-- Toast Notifikasi Ringan -->
+<div id="toastNotification" class="toast">Notifikasi</div>
+
+<script>
+    const ADMIN_USERNAME = "guru";
+    const ADMIN_PASSWORD = "admin123";
+
+    // Muat data dari LocalStorage
+    let dataAbsensi = JSON.parse(localStorage.getItem('absensi_db')) || [];
+    let isGuruLoggedIn = false;
+
+    function showToast(msg) {
+        const toast = document.getElementById('toastNotification');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3200);
+    }
+
+    function bukaTabGuru() {
+        if (isGuruLoggedIn) {
+            switchTab('guru');
+        } else {
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('username').focus();
+        }
+    }
+
+    function tutupModalLogin() {
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('loginForm').reset();
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const userInput = document.getElementById('username').value.trim();
+        const passInput = document.getElementById('password').value;
+
+        if (userInput === ADMIN_USERNAME && passInput === ADMIN_PASSWORD) {
+            isGuruLoggedIn = true;
+            tutupModalLogin();
+            switchTab('guru');
+            showToast("Login berhasil sebagai Guru.");
+        } else {
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+    });
+
+    function logoutGuru() {
+        isGuruLoggedIn = false;
+        showToast("Anda telah keluar dari mode Guru.");
+        switchTab('siswa');
+    }
+
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        if (tab === 'siswa') {
+            document.getElementById('tabSiswaBtn').classList.add('active');
+            document.getElementById('section-siswa').classList.remove('hidden');
+            document.getElementById('section-guru').classList.add('hidden');
+        } else if (tab === 'guru') {
+            document.getElementById('tabGuruBtn').classList.add('active');
+            document.getElementById('section-guru').classList.remove('hidden');
+            document.getElementById('section-siswa').classList.add('hidden');
+            ambilDataDariGoogleSheets();
+        }
+    }
+
+    function lihatFoto(src, captionText) {
+        document.getElementById('imgModalFull').src = src;
+        document.getElementById('fotoModalCaption').textContent = captionText || '';
+        document.getElementById('fotoModal').style.display = 'flex';
+    }
+
+    function tutupModalFoto() {
+        document.getElementById('fotoModal').style.display = 'none';
+    }
+
+    function compressAndConvertFileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    // Resize maksimal lebar/tinggi 800px untuk menjaga kapasitas LocalStorage
+                    const maxDim = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height && width > maxDim) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    } else if (height > maxDim) {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Kompresi JPEG 0.72
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.72);
+                    resolve(compressedBase64);
+                };
+                img.onerror = (e) => reject(e);
+            };
+            reader.onerror = (error) => reject(error);
+        });
+    }
+
+// 1. Masukkan URL dari Google Apps Script Anda di sini
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzHK91iluG6ZAjWe0K1Mhdhty_JGh0_rk5Cz6efTn2dF4NJwBqDNqBthspmYI8hc7Q/exec";
+
+    // 2. Logika pengiriman data absensi secara online ke Google Sheets
+    document.getElementById('absensiForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Mengambil tombol kirim untuk memberi tanda proses
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Sedang Mengirim...";
+
+        // Mengambil data dari form
+        const kelas = document.getElementById('kelas') ? document.getElementById('kelas').value : '-';
+        const nama = document.getElementById('nama').value;
+        const status = document.getElementById('status').value;
+        const keterangan = document.getElementById('keterangan').value || '-';
+        const waktu = new Date().toLocaleString('id-ID');
+        const fileInput = document.getElementById('foto');
+
+        let fotoBase64 = "-";
+
+        // Memproses foto jika ada
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            if (file.size > 2 * 1024 * 1024) {
+                alert("Ukuran gambar terlalu besar! Maksimal 2MB.");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Kirim Absensi";
+                return;
+            }
+            try {
+                fotoBase64 = await convertFileToBase64(file);
+            } catch (err) {
+                console.warn("Foto gagal diproses.");
+            }
+        }
+
+        // Paket data yang akan dikirim ke Google Sheets
+        const dataKirim = {
+            waktu: waktu,
+            kelas: kelas,
+            nama: nama,
+            status: status,
+            foto: fotoBase64,
+            keterangan: keterangan
+        };
+
+        try {
+            // Mengirim data ke Google Sheets via internet
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(dataKirim)
+            });
+
+            alert(`Absensi berhasil terkirim untuk ${nama}! Data sudah masuk ke Google Sheets.`);
+            this.reset();
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Gagal mengirim absensi! Periksa koneksi internet Anda.");
+        } finally {
+            // Mengembalikan tombol seperti semula
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Kirim Absensi";
+        }
+    });
+
+    // 3. Fungsi untuk membaca data dari Google Sheets saat Guru membuka tab Rekap
+    async function ambilDataDariGoogleSheets() {
+        const tbody = document.getElementById('tabelRekap');
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">Memuat data dari Google Sheets...</td></tr>';
+        
+        try {
+            const response = await fetch(SCRIPT_URL);
+            dataAbsensi = await response.json();
+            tampilkanRekap();
+        } catch (error) {
+            console.error("Error:", error);
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px; color: red;">Gagal memuat data dari spreadsheet.</td></tr>';
+        }
+    }
+
+    function tampilkanRekap() {
+        const tbody = document.getElementById('tabelRekap');
+        const filterVal = document.getElementById('filterKelas').value;
+        const counterEl = document.getElementById('rekapCounter');
+        tbody.innerHTML = '';
+
+        // Filter berdasarkan kelas jika dipilih
+        const dataDifilter = dataAbsensi.filter(item => {
+            if (filterVal === 'SEMUA') return true;
+            return (item.kelas || 'Belum Ditentukan') === filterVal;
+        });
+
+        counterEl.textContent = `Menampilkan ${dataDifilter.length} dari total ${dataAbsensi.length} presensi recorded (${filterVal === 'SEMUA' ? 'Semua Kelas' : filterVal})`;
+
+        if (dataDifilter.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align:center; padding: 25px; color: #64748b;">
+                        Belum ada data absensi untuk pilihan <b>${filterVal === 'SEMUA' ? 'semua kelas' : filterVal}</b>.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        // Urutkan dari yang paling baru
+        dataDifilter.slice().reverse().forEach(item => {
+            const tr = document.createElement('tr');
+            
+            let badgeClass = 'bg-hadir';
+            if (item.status === 'Izin') badgeClass = 'bg-izin';
+            if (item.status === 'Sakit') badgeClass = 'bg-sakit';
+            if (item.status === 'Alpa') badgeClass = 'bg-alpa';
+
+            const itemKelas = item.kelas || '-';
+
+            let fotoHTML = '<span class="no-photo">Tidak ada</span>';
+            if (item.foto) {
+                const caption = `${item.nama} - ${itemKelas} (${item.waktu})`;
+                fotoHTML = `<img src="${item.foto}" class="img-preview" alt="Foto Bukti" title="Klik lihat foto" onclick="lihatFoto('${item.foto}', '${caption}')">`;
+            }
+
+            tr.innerHTML = `
+                <td style="font-size: 12.5px; color: #475569;">${item.waktu}</td>
+                <td><span class="badge badge-kelas">${itemKelas}</span></td>
+                <td><strong>${item.nama}</strong></td>
+                <td><span class="badge ${badgeClass}">${item.status}</span></td>
+                <td>${fotoHTML}</td>
+                <td style="word-break: break-word;">${item.keterangan}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function exportToCSV() {
+        const filterVal = document.getElementById('filterKelas').value;
+        const dataExport = dataAbsensi.filter(item => {
+            if (filterVal === 'SEMUA') return true;
+            return (item.kelas || 'Belum Ditentukan') === filterVal;
+        });
+
+        if (dataExport.length === 0) {
+            showToast("Tidak ada data untuk diunduh!");
+            return;
+        }
+
+        let csv = '\uFEFFWaktu,Kelas,Nama Siswa,Status,Ada Bukti Foto,Keterangan\n';
+        dataExport.forEach(row => {
+            const adaFoto = row.foto ? 'Ada' : 'Tidak';
+            const rowKelas = row.kelas || '-';
+            const cleanKeterangan = (row.keterangan || '-').replace(/"/g, '""');
+            csv += `"${row.waktu}","${rowKelas}","${row.nama}","${row.status}","${adaFoto}","${cleanKeterangan}"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        const namaKelasFile = filterVal === 'SEMUA' ? 'semua_kelas' : filterVal.replace(/\s+/g, '_');
+        link.setAttribute('download', `rekap_absensi_${namaKelasFile}_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast("File rekap CSV berhasil diunduh.");
+    }
+
+    function hapusSemuaData() {
+        if (confirm("Apakah Anda yakin ingin menghapus seluruh data absensi ini? Tindakan ini tidak dapat dibatalkan.")) {
+            localStorage.removeItem('absensi_db');
+            dataAbsensi = [];
+            tampilkanRekap();
+            showToast("Semua data absensi telah direset.");
+        }
+    }
+
+    // Tutup popup saat klik background luar
+    window.onclick = function(event) {
+        const loginModal = document.getElementById('loginModal');
+        const fotoModal = document.getElementById('fotoModal');
+        if (event.target === loginModal) tutupModalLogin();
+        if (event.target === fotoModal) tutupModalFoto();
+    };
+</script>
+
+</body>
+</html>
